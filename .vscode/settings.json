@@ -1,0 +1,4 @@
+{
+  "clojureVSCode.autoStartNRepl": false,
+  "clojureVSCode.formatOnSave": true
+}
