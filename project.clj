@@ -35,6 +35,9 @@
   :ring {:handler api.core/app
          :async? true
          :adapter {:async? true}}
+
+  :test-refresh {:changes-only true
+                 :watch-dirs ["src" "test"]}
         
   :profiles
   {:dev {:env {:environment "development"}}
@@ -48,6 +51,6 @@
   :aliases
   {"repl:dev" ["do" "clean" ["with-profile" "+dev,+local-dev" "repl"]]
    "run:dev" ["with-profile" "+dev,+local-dev" "ring" "server-headless"]
+   "test:watch" ["with-profile" "+test,+local-test" "test-refresh"]
+   "test:once" ["with-profile" "+test,+local-test" "test" ":all"]
    "build:prod" ["do" "clean" ["with-profile" "prod" "uberjar"]]})
-           
-            
