@@ -36,7 +36,8 @@
          :async? true
          :adapter {:async? true}}
 
-  :test-refresh {:changes-only true
+  :test-refresh {:quiet true
+                 :changes-only true
                  :watch-dirs ["src" "test"]}
         
   :profiles

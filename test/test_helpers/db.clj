@@ -21,7 +21,7 @@
 
 (defn- get-dummies!
   [dummy-name]
-  (-> (str "./test/test_helpers/dummy_data/" dummy-name ".edn")
+  (-> (str "./resources/dummy_data/" dummy-name ".edn")
       slurp
       edn/read-string))
 
@@ -44,6 +44,7 @@
 
 (defn reset!
   []
+  (migration/migrate!)
   (migrate-down!)
   (migration/migrate!))
 
