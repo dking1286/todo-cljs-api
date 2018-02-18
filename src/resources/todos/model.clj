@@ -1,4 +1,5 @@
 (ns resources.todos.model
+  (:refer-clojure :exclude [update list])
   (:require [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]))
 

@@ -1,4 +1,5 @@
 (ns test-helpers.db
+  (:refer-clojure :exclude [update reset!])
   (:require [clojure.edn :as edn]
             [clojure.java.jdbc :as jdbc]
             [repl.migration :as migration]
