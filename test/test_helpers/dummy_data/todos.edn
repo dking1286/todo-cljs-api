@@ -1,0 +1,3 @@
+[{:table :todos
+  :rows [{:title "Hello" :body "World"}
+         {:title "Another" :body "todo" :is_done true}]}]
