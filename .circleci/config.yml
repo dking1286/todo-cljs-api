@@ -8,9 +8,9 @@ jobs:
         - PG_HOST: localhost
         - PG_USER: ubuntu
 
-      - image: circleci/postgres:9.6.2-alpine
+      - image: postgres:9.6
         environment:
-        - POSTGRES_USER: root
+        - POSTGRES_USER: ubuntu
         - POSTGRES_DB: todo_cljs_test
 
     environment:
