@@ -4,17 +4,39 @@ jobs:
     working_directory: ~/todo-cljs-api
     docker:
       - image: circleci/clojure:lein-2.7.1
+        environment:
+        - PG_HOST: localhost
+        - PG_USER: ubuntu
+
+      - image: circleci/postgres:9.6.2-alpine
+        environment:
+        - POSTGRES_USER: root
+        - POSTGRES_DB: todo_cljs_test
+
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
     steps:
       - checkout
+
       - restore_cache:
           key: todo-cljs-api-{{ checksum "project.clj" }}
-      - run: lein deps
+
+      - run:
+          name: Install dependencies
+          command: lein deps
+
       - save_cache:
           paths:
             - ~/.m2
             - ~/.lein
           key: todo-cljs-api-{{ checksum "project.clj" }}
-      - run: lein test:once
+
+      - run: 
+          name: Run all tests
+          command: lein with-profile +test test :all
+          environment:
+          - DB_NAME: todo_cljs_test
+          - DB_TYPE: postgresql
+          - DB_HOST: localhost
+          - DB_USER: ubuntu
