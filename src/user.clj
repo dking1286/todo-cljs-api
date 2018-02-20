@@ -1,2 +1,3 @@
 (ns user
-  (:require [repl.migration :as migration]))
+  (:require [clojure.tools.namespace.repl :as ctnr]
+            [repl.migration :as migration]))

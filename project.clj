@@ -32,9 +32,7 @@
   
   :repl-options {:port 3001}
   
-  :ring {:handler api.core/app
-         :async? true
-         :adapter {:async? true}}
+  :ring {:handler todo-cljs-api.core/app}
 
   :test-refresh {:quiet true
                  :changes-only true
