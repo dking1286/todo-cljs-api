@@ -16,10 +16,10 @@
 
 (defn create
   [data]
-  (-> (insert-into :todos)
-      (columns :title :body)
-      (values [[(:title data) (:body data)]])
-      (returning :*)))
+  (as-> (insert-into :todos) $
+        (apply columns $ (keys data))
+        (values $ [(vals data)])
+        (returning $ :*)))
 
 (defn update-by-id
   [id data]

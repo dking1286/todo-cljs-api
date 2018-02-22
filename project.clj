@@ -17,7 +17,8 @@
                  [ragtime "0.7.2"]
                  
                  ;; Build and development dependencies
-                 [cljfmt "0.5.7"]]
+                 [cljfmt "0.5.7"]
+                 [pjstadig/humane-test-output "0.8.3"]]
                  
   
   :plugins [[lein-environ "1.1.0"]
@@ -41,7 +42,9 @@
   :profiles
   {:dev {:env {:environment "development"}}
    
-   :test {:env {:environment "test"}}
+   :test {:env {:environment "test"}
+          :injections [(require 'pjstadig.humane-test-output)
+                       (pjstadig.humane-test-output/activate!)]}
    
    :prod {:env {:environment "production"}
           :main api.core

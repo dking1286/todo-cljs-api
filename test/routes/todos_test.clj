@@ -14,8 +14,8 @@
              (-> (root-handler {:request-method :get :uri "/todos"})
                  :status))))
     (testing "should respond with all todos"
-      (is (= [{:id 1 :title "Hello" :body "World" :done? false}
-              {:id 2 :title "Another" :body "todo" :done? true}]
+      (is (= [{:id 1 :title "Hello" :body "World" :done? false :user-id 1}
+              {:id 2 :title "Another" :body "todo" :done? true :user-id 1}]
              (-> (root-handler {:request-method :get :uri "/todos"})
                  :body
                  :data))))))
@@ -27,7 +27,7 @@
              (-> (root-handler {:request-method :get :uri "/todos/1"})
                  :status))))
     (testing "should respond with the todo"
-      (is (= {:id 1 :title "Hello" :body "World" :done? false}
+      (is (= {:id 1 :title "Hello" :body "World" :done? false :user-id 1}
              (-> (root-handler {:request-method :get :uri "/todos/1"})
                  :body
                  :data))))
@@ -45,7 +45,8 @@
     (let [response (root-handler {:request-method :post
                                   :uri "/todos"
                                   :body {:title "Awesome reminder"
-                                         :body "Be awesome"}})]
+                                         :body "Be awesome"
+                                         :user-id 1}})]
       (testing "should respond with status 201"
         (is (= 201
                (:status response))))
@@ -53,7 +54,7 @@
         (is (= 3
                (count (db/query todos-model/list)))))
       (testing "should respond with the newly created todo"
-        (is (= {:id 3 :title "Awesome reminder" :body "Be awesome" :done? false}
+        (is (= {:id 3 :title "Awesome reminder" :body "Be awesome" :done? false :user-id 1}
                (-> response :body :data)))))
     (testing "should respond with 400 if the title is missing"
       (let [response (root-handler {:request-method :post
