@@ -9,12 +9,15 @@
                  [org.clojure/core.async "0.3.465"]
                  [environ "1.1.0"]
                  [ring "1.6.3"]
+                 [ring-logger "0.7.7"]
                  [compojure "1.6.0"]
                  [com.cognitect/transit-clj "0.8.300"]
+                 [buddy/buddy-auth "2.1.0"]
                  [org.postgresql/postgresql "9.4.1212.jre7"]
                  [org.clojure/java.jdbc "0.7.5"]
                  [honeysql "0.9.1"]
                  [ragtime "0.7.2"]
+                 [cheshire "5.8.0"] ; Needed to resolve a dependency issue
                  
                  ;; Build and development dependencies
                  [cljfmt "0.5.7"]
