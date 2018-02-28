@@ -5,7 +5,7 @@
             [resources.todos.model :as todos-model]
             [routes.core :refer [root-handler]]))
 
-(use-fixtures :each (with-dummies "todos"))
+(use-fixtures :each (with-dummies "clients" "users" "access_tokens" "todos"))
 
 (deftest test-get-todos
   (testing "GET /todos"

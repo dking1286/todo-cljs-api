@@ -1,7 +1,3 @@
-[{:table :users
-  :rows [{:first_name "Daniel" :last_name "King"
-          :email "daniel.oliver.king@gmail.com"
-          :password "super secret"}]}
- {:table :todos
+[{:table :todos
   :rows [{:title "Hello" :body "World" :user_id 1}
          {:title "Another" :body "todo" :user_id 1 :is_done true}]}]

@@ -1,0 +1,4 @@
+[{:table :users
+  :rows [{:first_name "Daniel" :last_name "King"
+          :email "daniel.oliver.king@gmail.com"
+          :password "super secret"}]}]

@@ -12,7 +12,7 @@
 
 (defn get-by-token
   [token]
-  (-> (select [:users.* :access_tokens.token])
+  (-> (select :users.* :access_tokens.token)
       (from :users)
       (join :access_tokens [:= :users.id :access_tokens.user_id])
       (where [:= :access_tokens.token token])))
