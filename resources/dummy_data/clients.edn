@@ -1,8 +1,8 @@
-[{:table :clients
+[{:model resources.clients.model
   :rows [{:name "test_client" 
-          :client_id "00000000000000000000000000000000"
-          :client_secret "00000000000000000000000000000000"}
+          :client-id "00000000000000000000000000000000"
+          :client-secret "00000000000000000000000000000000"}
          {:name "trusted_test_client"
-          :client_id "11111111111111111111111111111111"
-          :client_secret "11111111111111111111111111111111"
-          :is_trusted true}]}]
+          :client-id "11111111111111111111111111111111"
+          :client-secret "11111111111111111111111111111111"
+          :trusted? true}]}]

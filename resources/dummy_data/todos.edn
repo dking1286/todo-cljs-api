@@ -1,3 +1,3 @@
-[{:table :todos
-  :rows [{:title "Hello" :body "World" :user_id 1}
-         {:title "Another" :body "todo" :user_id 1 :is_done true}]}]
+[{:model resources.todos.model
+  :rows [{:title "Hello" :body "World" :user-id 1}
+         {:title "Another" :body "todo" :user-id 1 :done? true}]}]

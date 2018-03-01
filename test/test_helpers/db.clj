@@ -29,14 +29,10 @@
 (defn- insert-one-dummy!
   [dummy]
   (doseq [table-values dummy]
-    (let [{:keys [table rows]} table-values
-          queries (map (fn [row]
-                         (as-> (insert-into table) $
-                           (apply columns $ (keys row))
-                           (values $ [(vals row)])))
-                       rows)]
-      (doseq [q queries]
-        (jdbc/execute! db/connection (sql/format q))))))
+    (let [{:keys [model rows]} table-values
+          create (get (ns-publics model) 'create)]
+      (doseq [row rows]
+        (db/query create row)))))
 
 (defn- insert-dummies!
   [& dummies]

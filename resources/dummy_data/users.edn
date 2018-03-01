@@ -1,4 +1,4 @@
-[{:table :users
-  :rows [{:first_name "Daniel" :last_name "King"
+[{:model resources.users.model
+  :rows [{:first-name "Daniel" :last-name "King"
           :email "daniel.oliver.king@gmail.com"
           :password "super secret"}]}]

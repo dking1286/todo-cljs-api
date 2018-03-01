@@ -13,6 +13,7 @@
                  [compojure "1.6.0"]
                  [com.cognitect/transit-clj "0.8.300"]
                  [buddy/buddy-auth "2.1.0"]
+                 [buddy/buddy-hashers "1.3.0"]
                  [org.postgresql/postgresql "9.4.1212.jre7"]
                  [org.clojure/java.jdbc "0.7.5"]
                  [honeysql "0.9.1"]
