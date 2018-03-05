@@ -2,11 +2,15 @@
   (:require [clojure.edn :as edn]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [resources.todos.controller :as todos-controller]))
+            [resources.todos.controller :as todos-controller]
+            [resources.users.controller :as users-controller]))
 
 (defroutes root-handler
   (GET "/" []
     "Running")
+  (context "/users" []
+    (POST "/" []
+      users-controller/create-one))
   (context "/todos" []
     (GET "/" []
       todos-controller/get-all)
