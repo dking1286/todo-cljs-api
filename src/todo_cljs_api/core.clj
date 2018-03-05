@@ -8,6 +8,7 @@
             [middleware.request :refer [wrap-json-request-body]]
             [middleware.response :refer [wrap-json-response-body]]
             [middleware.auth :refer [wrap-token-auth]]
+            [middleware.error-handling :refer [wrap-error-handling]]
             [routes.core :refer [root-handler]]))
 
 (def middleware-stack
@@ -19,4 +20,6 @@
     wrap-json-request-body
     wrap-json-response-body))
 
-(def app (middleware-stack root-handler))
+(def handler (wrap-error-handling root-handler))
+
+(def app (middleware-stack handler))

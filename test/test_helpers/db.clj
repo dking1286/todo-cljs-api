@@ -29,10 +29,11 @@
 (defn- insert-one-dummy!
   [dummy]
   (doseq [table-values dummy]
-    (let [{:keys [model rows]} table-values
-          create (get (ns-publics model) 'create)]
-      (doseq [row rows]
-        (db/query create row)))))
+    (let [{:keys [model rows]} table-values]
+      (require model)
+      (let [create (-> (ns-publics model) (get 'create) deref)]
+        (doseq [row rows]
+          (db/query create row))))))
 
 (defn- insert-dummies!
   [& dummies]

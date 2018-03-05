@@ -1,34 +1,45 @@
 (ns resources.todos.model
   (:refer-clojure :exclude [update list])
   (:require [honeysql.helpers :refer :all]
-            [lib.honeysql :refer [returning]]))
+            [lib.honeysql :refer [returning]]
+            [db.model :refer [IQuery]]))
 
-(defn get-by-id
-  [id]
-  (-> (select :*)
-      (from :todos)
-      (where [:= :id id])))
+(def get-by-id
+  (reify
+    IQuery
+    (query [_ id]
+      (-> (select :*)
+          (from :todos)
+          (where [:= :id id])))))
 
-(defn list
-  []
-  (-> (select :*)
-      (from :todos)))
+(def list
+  (reify
+    IQuery
+    (query [_]
+      (-> (select :*)
+          (from :todos)))))
 
-(defn create
-  [data]
-  (as-> (insert-into :todos) $
-        (apply columns $ (keys data))
-        (values $ [(vals data)])
-        (returning $ :*)))
+(def create
+  (reify
+    IQuery
+    (query [_ data]
+      (as-> (insert-into :todos) $
+            (apply columns $ (keys data))
+            (values $ [(vals data)])
+            (returning $ :*)))))
 
-(defn update-by-id
-  [id data]
-  (-> (update :todos)
-      (sset data)
-      (where [:= :id id])
-      (returning :*)))
+(def update-by-id
+  (reify
+    IQuery
+    (query [_ id data]
+      (-> (update :todos)
+          (sset data)
+          (where [:= :id id])
+          (returning :*)))))
 
-(defn delete-by-id
-  [id]
-  (-> (delete-from :todos)
-      (where [:= :id id])))
+(def delete-by-id
+  (reify
+    IQuery
+    (query [_ id]
+      (-> (delete-from :todos)
+          (where [:= :id id])))))
