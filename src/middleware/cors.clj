@@ -3,20 +3,12 @@
             [environ.core :refer [env]]
             [ring.util.response :as r]))
 
-(def cors-headers
-  {"Access-Control-Allow-Origin" (:frontend-url env)
-    "Access-Control-Allow-Headers" ["content-type"]
-    "Access-Control-Allow-Methods" ["GET" "POST" "PATCH" "DELETE"]})
-
-(def serialized-cors-headers
-  (into {}
-        (map (fn [[name val]]
-               [name (if (vector? val) (string/join "," val) val)]))
-        cors-headers))
-
 (defn- with-cors-headers
   [res]
-  (reduce #(apply r/header %1 %2) res serialized-cors-headers))
+  (-> res
+      (r/header "Access-Control-Allow-Origin" (:frontend-url env))
+      (r/header "Access-Control-Allow-Headers" "content-type")
+      (r/header "Access-Control-Allow-Methods" "GET,POST,PATCH,DELETE")))
 
 (defn wrap-cors
   [handler]
