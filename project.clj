@@ -32,6 +32,7 @@
             [cider/cider-nrepl "0.16.0"]]
   
   :source-paths ["src"]
+  :test-paths ["test"]
   :target-path "target/%s"
   :clean-targets ^{:protect false} [:target-path]
   
