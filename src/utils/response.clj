@@ -7,6 +7,13 @@
       (r/status 404)))
 
 (defn bad-request
-  [message]
-  (-> (r/response (or message "Bad request"))
-      (r/status 400)))
+  ([] (bad-request nil))
+  ([message]
+    (-> (r/response (or message "Bad request"))
+        (r/status 400))))
+
+(defn conflict
+  ([] (conflict nil))
+  ([message]
+    (-> (r/response (or message "Conflict"))
+        (r/status 409))))
