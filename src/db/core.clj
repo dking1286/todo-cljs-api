@@ -22,7 +22,8 @@
   [q & params]
   {:pre [(satisfies? IQuery q)]}
   (when (satisfies? IQueryValidation q)
-    (apply db.model/validate q params))
+    (when-let [error (apply db.model/validate q params)]
+      (throw error)))
   (try
     (->> (map param->db-style params)
          (apply db.model/query q)

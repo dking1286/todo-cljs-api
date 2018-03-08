@@ -13,3 +13,9 @@
     (internal-server-error "Something went wrong. Please try again later."))
   ([message]
     (ex-info message {:status 500})))
+
+(defn unauthorized-error
+  ([]
+    (unauthorized-error "Unauthorized"))
+  ([message]
+    (ex-info message {:status 401})))

@@ -2,11 +2,10 @@
   (:refer-clojure :exclude [update])
   (:require [clojure.spec.alpha :as s]
             [honeysql.helpers :refer :all]
-            [buddy.hashers :as hashers]
-            [db.model :refer [IQueryValidation IQuery IQueryOnError]]
             [lib.honeysql :refer [returning]]
-            [utils.http-exceptions :as errors]
-            [utils.postgresql :as psql]))
+            [db.model :refer [defquery IQueryValidation IQuery]]
+            [db.errors :refer [validation-error]]
+            [utils.auth :refer [hash-string]]))
 
 (s/def ::first-name string?)
 (s/def ::last-name string?)
@@ -21,33 +20,34 @@
   (let [password (:password user-data)]
     (if (nil? password)
       user-data
-      (assoc user-data :password (hashers/derive password)))))
+      (assoc user-data :password (hash-string password)))))
 
-(def create
-  (reify
-    IQueryValidation
-    (validate [this data]
-      (when-not (s/valid? ::user-data data)
-        (throw (errors/bad-request-error
-                "Cannot create user with the provided data"))))
-    IQuery
-    (query [this data]
-      (let [prepared-data (hash-password data)]
-        (as-> (insert-into :users) $
-              (apply columns $ (keys prepared-data))
-              (values $ [(vals prepared-data)])
-              (returning $ :*))))
-    IQueryOnError
-    (on-error [this e]
-      (if (psql/conflict-error? e)
-        (throw (errors/conflict-error (.getMessage e)))
-        (throw e)))))
+(defquery create
+  IQueryValidation
+  (validate [this data]
+    (when-not (s/valid? ::user-data data)
+      (validation-error
+        "Cannot create user with the provided data"
+        {:details (with-out-str (s/explain ::user-data data))})))
+  IQuery
+  (query [this data]
+    (let [prepared-data (hash-password data)]
+      (as-> (insert-into :users) $
+        (apply columns $ (keys prepared-data))
+        (values $ [(vals prepared-data)])
+        (returning $ :*)))))
 
-(def get-by-token
-  (reify
-    IQuery
-    (query [this token]
-      (-> (select :users.* :access_tokens.token)
-          (from :users)
-          (join :access_tokens [:= :users.id :access_tokens.user_id])
-          (where [:= :access_tokens.token token])))))
+(defquery get-by-token
+   IQuery
+  (query [this token]
+    (-> (select :users.* :access_tokens.token)
+        (from :users)
+        (join :access_tokens [:= :users.id :access_tokens.user_id])
+        (where [:= :access_tokens.token token]))))
+
+(defquery get-by-email
+  IQuery
+  (query [_ email]
+    (-> (select :*)
+        (from :users)
+        (where [:= :email email]))))
