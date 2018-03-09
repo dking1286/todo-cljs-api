@@ -3,12 +3,9 @@
   (:require [clojure.spec.alpha :as s]
             [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]
+            [utils.spec :refer [length-32?]]
             [db.model :refer [defquery IQuery IQueryValidation]]
             [db.errors :refer [validation-error]]))
-
-(defn- length-32?
-  [c]
-  (= 32 (count c)))
 
 (s/def ::name string?)
 (s/def ::client-id (s/and string? length-32?))

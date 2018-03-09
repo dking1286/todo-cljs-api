@@ -1,5 +1,8 @@
 (ns utils.oauth2
-  (:require [clojure.spec.alpha :as s]
+  (:require [environ.core :refer [env]]
+            [buddy.core.codecs :as codecs]
+            [buddy.core.kdf :as kdf]
+            [buddy.core.nonce :as nonce]
             [db.core :as db]
             [resources.clients.model :as clients]
             [resources.users.model :as users]
@@ -7,21 +10,32 @@
                                            unauthorized-error]]
             [utils.auth :refer [hash-matches?]]))
 
-(defmulti check-credentials :grant-type)
+(defmulti get-identity-by-credentials :grant-type)
 
-(defmethod check-credentials "password"
-  [{:keys [username password]}]
-  (when-let [user (first (db/query users/get-by-email username))]
-    (when (hash-matches? password (user :password))
-      true)))
+(defmethod get-identity-by-credentials "password"
+  [{:keys [client-id username password]}]
+  (when-let [client (first (db/query clients/get-by-id client-id))]
+    (when-let [user (first (db/query users/get-by-email username))]
+      (when (hash-matches? password (user :password))
+        {:user user :client client}))))
 
-(defmethod check-credentials "client_credentials"
+(defmethod get-identity-by-credentials "client_credentials"
   [{:keys [client-id client-secret]}]
   (when-let [client (first (db/query clients/get-by-id client-id))]
     (when (and (client :trusted?)
                (= (client :client-secret) client-secret))
-      true)))
+      {:user nil :client client})))
 
-(defmethod check-credentials :default
+(defmethod get-identity-by-credentials :default
   [data]
   (throw (bad-request-error (str "Invalid grant type " (data :grant-type)))))
+
+(def hkdf
+  (kdf/engine {:alg :hkdf+sha256
+               :key (get env :token-generation-key)
+               :salt (nonce/random-bytes 8)}))
+
+(defn create-token
+  []
+  (-> (kdf/get-bytes hkdf 16)
+      codecs/bytes->hex))

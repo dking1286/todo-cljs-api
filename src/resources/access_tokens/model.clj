@@ -1,10 +1,27 @@
 (ns resources.access-tokens.model
   (:refer-clojure :exclude [update])
-  (:require [honeysql.helpers :refer :all]
+  (:require [clojure.spec.alpha :as s]
+            [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]
-            [db.model :refer [defquery IQuery]]))
+            [utils.spec :refer [length-32?]]
+            [db.model :refer [defquery IQuery IQueryValidation]]
+            [db.errors :refer [validation-error]]))
+
+(s/def ::token (s/and string? length-32?))
+(s/def ::client-id integer?)
+(s/def ::user-id integer?)
+
+(s/def ::access-token-data
+  (s/keys :req-un [::token ::client-id]
+          :opt-un [::user-id]))
 
 (defquery create
+  IQueryValidation
+  (validate [_ data]
+    (when-not (s/valid? ::access-token-data data)
+      (validation-error
+       "Cannot create access-token with the provided data"
+       {:details (with-out-str (s/explain ::access-token-data data))})))
   IQuery
   (query [_ data]
     (as-> (insert-into :access_tokens) $

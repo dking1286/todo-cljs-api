@@ -2,12 +2,16 @@
   (:require [clojure.edn :as edn]
             [compojure.core :refer :all]
             [compojure.route :as route]
+            [resources.access-tokens.controller :as access-tokens-controller]
             [resources.todos.controller :as todos-controller]
             [resources.users.controller :as users-controller]))
 
 (defroutes root-handler
   (GET "/" []
     "Running")
+  (context "/oauth2" []
+    (POST "/token" []
+      access-tokens-controller/create-access-token))
   (context "/users" []
     (POST "/" []
       users-controller/create-one))

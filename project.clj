@@ -12,6 +12,7 @@
                  [ring-logger "0.7.7"]
                  [compojure "1.6.0"]
                  [com.cognitect/transit-clj "0.8.300"]
+                 [buddy/buddy-core "1.4.0"]
                  [buddy/buddy-auth "2.1.0"]
                  [buddy/buddy-hashers "1.3.0"]
                  [org.postgresql/postgresql "9.4.1212.jre7"]
