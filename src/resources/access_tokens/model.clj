@@ -7,7 +7,7 @@
             [db.model :refer [defquery IQuery IQueryValidation]]
             [db.errors :refer [validation-error]]))
 
-(s/def ::token (s/and string? length-32?))
+(s/def ::token (s/and string? #(> (count %) 16 )))
 (s/def ::client-id integer?)
 (s/def ::user-id integer?)
 
