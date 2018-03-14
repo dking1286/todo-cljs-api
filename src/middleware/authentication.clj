@@ -1,4 +1,4 @@
-(ns middleware.auth
+(ns middleware.authentication
   (:require [buddy.auth.middleware :refer [wrap-authentication]]
             [buddy.auth.backends :as backends]
             [db.core :as db]
@@ -10,7 +10,7 @@
     nil
     (first (db/query users/get-by-token token))))
 
-(defn wrap-token-auth
+(defn wrap-token-authentication
   [handler]
   (wrap-authentication
     handler (backends/token {:authfn get-user-by-token})))
