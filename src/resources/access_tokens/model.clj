@@ -28,3 +28,15 @@
           (apply columns $ (keys data))
           (values $ [(vals data)])
           (returning $ :*))))
+
+(defquery delete-by-token
+  IQueryValidation
+  (validate [_ token]
+    (when-not (s/valid? ::token token)
+      (validation-error
+        "Invalid token provided"
+        {:details (with-out-str (s/explain ::token token))})))
+  IQuery
+  (query [_ token]
+    (-> (delete-from :access_tokens)
+        (where [:= :token token]))))

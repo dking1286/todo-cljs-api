@@ -18,3 +18,9 @@
                                     :user-id (user :id)
                                     :token (create-token)}))]
         (r/response {:data token})))))
+
+(defn revoke-access-token
+  [req]
+  (db/execute! access-tokens/delete-by-token (-> req :identity :token))
+  (-> (r/response nil)
+      (r/status 204)))
