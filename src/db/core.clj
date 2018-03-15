@@ -2,7 +2,7 @@
   (:require [clojure.java.jdbc :as jdbc]
             [honeysql.core :as sql]
             [environ.core :refer [env]]
-            [db.model :refer [IQuery IQueryValidation IQueryOnError]]
+            [db.model :refer [IQuery IQueryValidation IQueryOnError IPostQuery]]
             [utils.formatting :refer [db->clj clj->db]]))
 
 (def connection
@@ -18,18 +18,35 @@
     (clj->db param)
     param))
 
-(defn query
+(defn- do-validation!
   [q & params]
   {:pre [(satisfies? IQuery q)]}
   (when (satisfies? IQueryValidation q)
     (when-let [error (apply db.model/validate q params)]
-      (throw error)))
+      (throw error))))
+
+(defn- do-query!
+  [q & params]
+  {:pre [(satisfies? IQuery q)]}
+  (->> (map param->db-style params)
+       (apply db.model/query q)
+       sql/format
+       (jdbc/query connection)
+       (map db->clj)))
+
+(defn- post-process
+  [q results]
+  (if (satisfies? IPostQuery q)
+    (db.model/post-query q results)
+    results))
+
+(defn query
+  [q & params]
+  {:pre [(satisfies? IQuery q)]}
+  (apply do-validation! q params)
   (try
-    (->> (map param->db-style params)
-         (apply db.model/query q)
-         sql/format
-         (jdbc/query connection)
-         (map db->clj))
+    (->> (apply do-query! q params)
+         (post-process q))
     (catch Exception e
       (if (satisfies? IQueryOnError q)
         (db.model/on-error q e)

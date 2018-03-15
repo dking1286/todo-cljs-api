@@ -1,8 +1,8 @@
 CREATE TABLE clients (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(128) NOT NULL,
+  name VARCHAR(128) NOT NULL UNIQUE,
   client_id VARCHAR(32)
-    NOT NULL CHECK (character_length(client_id) = 32),
+    NOT NULL UNIQUE CHECK (character_length(client_id) = 32),
   client_secret VARCHAR(32)
     NOT NULL CHECK (character_length(client_secret) = 32),
   is_trusted BOOLEAN DEFAULT false

@@ -1,52 +1,15 @@
 (ns test-helpers.db
   (:refer-clojure :exclude [update reset!])
-  (:require [clojure.edn :as edn]
-            [clojure.java.jdbc :as jdbc]
-            [repl.migration :as migration]
-            [db.core :as db]
-            [honeysql.core :as sql]
-            [honeysql.helpers :refer :all]))
-
-(defn- get-migration-count
-  []
-  (let [q (-> (select :%count.id)
-              (from :ragtime_migrations)
-              sql/format)]
-    (-> (jdbc/query db/connection q)
-        first
-        :count)))
-
-(defn- migrate-down!
-  []
-  (dorun (get-migration-count) (repeatedly migration/rollback!)))
-
-(defn- get-dummies!
-  [dummy-name]
-  (-> (str "./resources/dummy_data/" dummy-name ".edn")
-      slurp
-      edn/read-string))
-
-(defn- insert-one-dummy!
-  [dummy]
-  (doseq [table-values dummy]
-    (let [{:keys [model rows]} table-values]
-      (require model)
-      (let [create (-> (ns-publics model) (get 'create) deref)]
-        (doseq [row rows]
-          (db/query create row))))))
-
-(defn- insert-dummies!
-  [& dummies]
-  (doseq [dummy dummies]
-    (insert-one-dummy! dummy)))
+  (:require [repl.migration :as migration]
+            [repl.seed :as seed]))
 
 (defn reset!
   []
   (migration/migrate!)
-  (migrate-down!)
+  (migration/migrate-down!)
   (migration/migrate!))
 
-(defn reset-with-dummies!
-  [& dummy-names]
+(defn reset-with-seeds!
+  [& seed-set-names]
   (reset!)
-  (apply insert-dummies! (map get-dummies! dummy-names)))
+  (apply seed/seed! seed-set-names))

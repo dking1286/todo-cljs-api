@@ -1,8 +1,13 @@
 (ns repl.migration
+  (:refer-clojure :exclude [update])
   (:require [ragtime.repl :as repl]
             [clojure.java.io :as io]
+            [clojure.java.jdbc :as jdbc]
             [clojure.string :as string]
             [clojure.edn :as edn]
+            [honeysql.core :as sql]
+            [honeysql.helpers :refer :all]
+            [db.core :as db]
             [db.migration :as migration]))
 
 (defn- left-pad-zeros
@@ -36,6 +41,15 @@
            last
            inc-migration-tag))))
 
+(defn- get-migration-count
+  []
+  (let [q (-> (select :%count.id)
+              (from :ragtime_migrations)
+              sql/format)]
+    (-> (jdbc/query db/connection q)
+        first
+        :count)))
+
 (defn create-migration!
   [name]
   (let [migration-tag (get-next-migration-tag)
@@ -50,3 +64,7 @@
 (defn rollback!
   []
   (repl/rollback (migration/get-config)))
+
+(defn migrate-down!
+  []
+  (dorun (get-migration-count) (repeatedly rollback!)))

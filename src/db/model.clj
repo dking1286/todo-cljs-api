@@ -20,3 +20,6 @@
 
 (defprotocol IQueryOnError
   (on-error [this e]))
+
+(defprotocol IPostQuery
+  (post-query [a] [a b]))
