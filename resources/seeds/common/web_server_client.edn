@@ -1,0 +1,6 @@
+(fn [client-id client-secret]
+  [{:model "resources.clients.model"
+    :rows [{:name "web_server"
+            :client-id client-id
+            :client-secret client-secret
+            :trusted? true}]}])

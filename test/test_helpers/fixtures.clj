@@ -6,7 +6,9 @@
   [& dummy-names]
   (fn [test]
     ;; Use seeds from the test/ folder by default
-    (let [full-names (map #(str "test/" %) dummy-names)]
+    (let [full-names (->> dummy-names
+                          (map #(str "test/" %))
+                          (map (fn [name] {:name name :args []})))]
       ;; Suppress the migration notifications written to stdout
       (with-out-str
         (apply reset-with-seeds! full-names))

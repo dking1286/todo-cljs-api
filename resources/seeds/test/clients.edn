@@ -1,8 +1,9 @@
-[{:model resources.clients.model
-  :rows [{:name "test_client" 
-          :client-id "00000000000000000000000000000000"
-          :client-secret "00000000000000000000000000000000"}
-         {:name "trusted_test_client"
-          :client-id "11111111111111111111111111111111"
-          :client-secret "11111111111111111111111111111111"
-          :trusted? true}]}]
+(fn []
+  [{:model "resources.clients.model"
+    :rows [{:name "test_client" 
+            :client-id "00000000000000000000000000000000"
+            :client-secret "00000000000000000000000000000000"}
+           {:name "trusted_test_client"
+            :client-id "11111111111111111111111111111111"
+            :client-secret "11111111111111111111111111111111"
+            :trusted? true}]}])

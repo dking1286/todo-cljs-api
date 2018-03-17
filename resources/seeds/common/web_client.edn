@@ -1,0 +1,5 @@
+(fn [client-id client-secret]
+  [{:model "resources.clients.model"
+    :rows [{:name "web"
+            :client-id client-id
+            :client-secret client-secret}]}])

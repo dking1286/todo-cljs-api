@@ -1,6 +1,7 @@
 (ns resources.clients.model
   (:refer-clojure :exclude [update])
   (:require [clojure.spec.alpha :as s]
+            [clojure.string :as string]
             [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]
             [utils.spec :refer [length-32?]]
@@ -16,6 +17,13 @@
 (s/def ::client-data
   (s/keys :req-un [::name ::client-id ::client-secret]
           :opt-un [::trusted?]))
+
+(defn generate-client-id
+  []
+  (let [chars (into [] (map char) (concat (range 48 58) ;; Digits
+                                          (range 65 91) ;; Capital letters
+                                          (range 97 123)))] ;; Lower case letters
+    (string/join "" (take 32 (repeatedly #(rand-nth chars))))))
 
 (defquery create
   IQueryValidation
@@ -47,11 +55,19 @@
        (from :clients)
        (where [:= :client_id client-id]))))
 
+(defquery get-by-name
+  IQuery
+  (query
+   [_ name]
+   (-> (select :*)
+       (from :clients)
+       (where [:= :name name]))))
+
 (defquery create-seed?
   IQuery
   (query
-   [_ {:keys [client-id]}]
-   (query get-by-id client-id))
+   [_ {:keys [name]}]
+   (query get-by-name name))
   IPostQuery
   (post-query
    [_ results]

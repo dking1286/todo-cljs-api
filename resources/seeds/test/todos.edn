@@ -1,3 +1,4 @@
-[{:model resources.todos.model
-  :rows [{:title "Hello" :body "World" :user-id 1}
-         {:title "Another" :body "todo" :user-id 1 :done? true}]}]
+(fn []
+  [{:model "resources.todos.model"
+    :rows [{:title "Hello" :body "World" :user-id 1}
+           {:title "Another" :body "todo" :user-id 1 :done? true}]}])

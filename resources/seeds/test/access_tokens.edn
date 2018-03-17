@@ -1,4 +1,5 @@
-[{:model resources.access-tokens.model
-  :rows [{:client-id 1
-          :user-id 1
-          :token "00000000000000000000000000000000"}]}]
+(fn []
+  [{:model "resources.access-tokens.model"
+    :rows [{:client-id 1
+            :user-id 1
+            :token "00000000000000000000000000000000"}]}])
