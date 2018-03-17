@@ -6,8 +6,7 @@
             [db.core :as db]
             [resources.clients.model :as clients]
             [resources.users.model :as users]
-            [utils.http-exceptions :refer [bad-request-error
-                                           unauthorized-error]]
+            [utils.http-exceptions :refer [bad-request-error]]
             [utils.auth :refer [hash-matches?]]))
 
 (defmulti get-identity-by-credentials :grant-type)
