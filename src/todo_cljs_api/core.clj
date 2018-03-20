@@ -9,6 +9,7 @@
             [middleware.response :refer [wrap-json-response-body]]
             [middleware.authentication :refer [wrap-token-authentication]]
             [middleware.error-handling :refer [wrap-error-handling]]
+            [middleware.spec :refer [wrap-spec]]
             [routes.core :refer [root-handler]]))
 
 (def middleware-stack
@@ -18,6 +19,7 @@
    (in-env #{"development" "test" "production"} wrap-cors)
    (in-env #{"development" "test" "production"} wrap-token-authentication)
    (in-env #{"development" "production"} wrap-json-request-body)
+   (in-env #{"development" "test"} wrap-spec)
    (in-env #{"development" "production"} wrap-json-response-body)
    (in-env #{"development" "test" "production"} wrap-error-handling)))
 

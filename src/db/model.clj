@@ -1,5 +1,16 @@
 (ns db.model)
 
+(defmacro defentity
+  [name-sym attr-syms & forms]
+  `(defrecord ~name-sym ~attr-syms
+    ~@forms
+    clojure.lang.IFn
+    (invoke [this# key#]
+      (-> this# key#))))
+
+(defprotocol IExposedAttributes
+  (exposed-attributes [this scope]))
+
 (defmacro defquery
   [name & forms]
   (let [num-symbols (atom 0)

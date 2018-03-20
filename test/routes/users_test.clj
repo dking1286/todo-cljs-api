@@ -21,8 +21,8 @@
         (is (= "Daniel" (-> response :body :data :first-name)))
         (is (= "King" (-> response :body :data :last-name)))
         (is (= "dking@gmail.com" (-> response :body :data :email))))
-      (testing "should hash the given password"
-        (is (not= "super secret" (-> response :body :data :password)))))
+      (testing "should not expose the user's password hash"
+        (is (nil? (-> response :body :data :password)))))
     (testing "should respond with 400 if the email is missing"
       (let [request {:request-method :post
                      :uri "/users"

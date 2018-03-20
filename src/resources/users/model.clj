@@ -3,7 +3,13 @@
   (:require [clojure.spec.alpha :as s]
             [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]
-            [db.model :refer [query defquery IQueryValidation IQuery IPostQuery]]
+            [db.model :refer [query
+                              defquery
+                              defentity
+                              IExposedAttributes
+                              IQueryValidation
+                              IQuery
+                              IPostQuery]]
             [db.errors :refer [validation-error]]
             [utils.auth :refer [hash-string]]))
 
@@ -15,6 +21,30 @@
 (s/def ::user-data
   (s/keys :req-un [::first-name ::last-name ::email ::password]))
 
+(s/def ::user-attrs-scope #{:public :self})
+
+(defentity User [id first-name last-name email password]
+  IExposedAttributes
+  (exposed-attributes
+    [this scope]
+    {:pre [(s/valid? ::user-attrs-scope scope)]}
+    (condp = scope
+      :public #{:id :first-name :last-name :email}
+      :self #{:id :first-name :last-name :email})))
+
+(defmacro defuserquery
+  [name-sym & forms]
+  (if (some #{'IPostQuery} forms)
+    `(defquery ~name-sym ~@forms)
+    `(defquery ~name-sym
+      ~@forms
+      IPostQuery
+      (post-query
+        [this# results#]
+        (if (sequential? results#)
+          (map map->User results#)
+          (map->User results#))))))
+
 (defn- hash-password
   [user-data]
   (let [password (:password user-data)]
@@ -22,7 +52,7 @@
       user-data
       (assoc user-data :password (hash-string password)))))
 
-(defquery create
+(defuserquery create
   IQueryValidation
   (validate
    [this data]
@@ -39,7 +69,7 @@
        (values $ [(vals prepared-data)])
        (returning $ :*)))))
 
-(defquery get-by-token
+(defuserquery get-by-token
   IQuery
   (query
    [this token]
@@ -48,7 +78,7 @@
        (join :access_tokens [:= :users.id :access_tokens.user_id])
        (where [:= :access_tokens.token token]))))
 
-(defquery get-by-email
+(defuserquery get-by-email
   IQuery
   (query
    [_ email]
@@ -56,7 +86,7 @@
        (from :users)
        (where [:= :email email]))))
 
-(defquery create-seed?
+(defuserquery create-seed?
   IQuery
   (query
    [_ {:keys [email]}]

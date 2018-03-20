@@ -5,14 +5,12 @@
 (s/def ::scope #{:anonymous :authenticated})
 
 (defn wrap-authorization
-  [scope handler]
+  [scope]
   {:pre [(s/valid? ::scope scope)]}
-  (fn [req]
-    (condp = scope
-      :anonymous
-      (handler req)
-
-      :authenticated
-      (if-not (req :identity)
-        (throw (unauthorized-error))
-        (handler req)))))
+  (fn [handler]
+    (fn [req]
+      (condp = scope
+        :anonymous (handler req)
+        :authenticated (if-not (req :identity)
+                         (throw (unauthorized-error))
+                         (handler req))))))
