@@ -5,7 +5,7 @@
             [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]
             [utils.spec :refer [length-32?]]
-            [db.model :refer [query defquery
+            [db.model :refer [query defquery defentity
                               IQuery IQueryValidation IPostQuery]]
             [db.errors :refer [validation-error]]))
 
@@ -17,6 +17,21 @@
 (s/def ::client-data
   (s/keys :req-un [::name ::client-id ::client-secret]
           :opt-un [::trusted?]))
+
+(defentity Client [id name client-id client-secret trusted?])
+
+(defmacro defclientquery
+  [name-sym & forms]
+  (if (some #{'IPostQuery} forms)
+    `(defquery ~name-sym ~@forms)
+    `(defquery ~name-sym
+      ~@forms
+      IPostQuery
+      (post-query
+        [this# results#]
+        (if (sequential? results#)
+          (map map->Client results#)
+          (map->Client results#))))))
 
 (defn generate-client-id
   []
@@ -41,13 +56,7 @@
      (values $ [(vals data)])
      (returning $ :*))))
 
-(defquery get-by-id
-  IQueryValidation
-  (validate
-   [_ client-id]
-   (when-not (s/valid? ::client-id client-id)
-     (validation-error
-      (str "Invalid client-id " client-id " provided"))))
+(defclientquery get-by-id
   IQuery
   (query
    [_ client-id]

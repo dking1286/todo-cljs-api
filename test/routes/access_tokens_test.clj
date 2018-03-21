@@ -27,7 +27,42 @@
           (let [token (first (jdbc/query db/connection
                                          ["SELECT * FROM access_tokens WHERE token = ?"
                                           "55555555555555555555555555555555"]))]
-            (is (not (nil? token)))))))))
+            (is (not (nil? token))))))
+      (testing "should respond with 401 if the client id is missing"
+        (let [request {:request-method :post
+                       :uri "/oauth2/token"
+                       :body {:username "daniel.oliver.king@gmail.com"
+                              :password "super secret"
+                              :grant-type "password"}}
+              response (app request)]
+          (is (= 401 (response :status)))))
+      (testing "should respond with 401 if the client id is incorrect"
+        (let [request {:request-method :post
+                       :uri "/oauth2/token"
+                       :body {:username "daniel.oliver.king@gmail.com"
+                              :password "super secret"
+                              :grant-type "password"
+                              :client-id "888888888888888"}}
+              response (app request)]
+          (is (= 401 (response :status)))))
+      (testing "should respond with 401 if the username is incorrect"
+        (let [request {:request-method :post
+                       :uri "/oauth2/token"
+                       :body {:username "wrong"
+                              :password "super secret"
+                              :grant-type "password"
+                              :client-id "00000000000000000000000000000000"}}
+              response (app request)]
+          (is (= 401 (response :status)))))
+      (testing "should respond with 401 if the password is incorrect"
+        (let [request {:request-method :post
+                       :uri "/oauth2/token"
+                       :body {:username "daniel.oliver.king@gmail.com"
+                              :password "wrong"
+                              :grant-type "password"
+                              :client-id "00000000000000000000000000000000"}}
+              response (app request)]
+          (is (= 401 (response :status))))))))
 
 (deftest test-logout-user
   (testing "POST /oauth2/revoke"
