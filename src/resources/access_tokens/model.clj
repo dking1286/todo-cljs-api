@@ -4,8 +4,9 @@
             [honeysql.helpers :refer :all]
             [lib.honeysql :refer [returning]]
             [utils.spec :refer [length-32?]]
-            [db.model :refer [query defquery
-                              IQuery IQueryValidation IPostQuery]]
+            [db.model :refer [query defquery defentity
+                              IQuery IQueryValidation IPostQuery
+                              IExposedAttributes]]
             [db.errors :refer [validation-error]]))
 
 (s/def ::token (s/and string? #(> (count %) 16)))
@@ -16,7 +17,30 @@
   (s/keys :req-un [::token ::client-id]
           :opt-un [::user-id]))
 
-(defquery create
+(s/def ::access-tokens-attrs-scope #{:public})
+
+(defentity AccessToken [id token client-id user-id]
+  IExposedAttributes
+  (exposed-attributes
+    [_ scope]
+    {:pre [(s/valid? ::access-tokens-attrs-scope scope)]}
+    (condp = scope
+      :public #{:token})))
+
+(defmacro defaccesstokenquery
+  [name-sym & forms]
+  (if (some #{'IPostQuery} forms)
+    `(defquery ~name-sym ~@forms)
+    `(defquery ~name-sym
+      ~@forms
+      IPostQuery
+      (post-query
+        [this# results#]
+        (if (sequential? results#)
+          (map map->AccessToken results#)
+          (map->AccessToken results#))))))
+
+(defaccesstokenquery create
   IQueryValidation
   (validate
    [_ data]
@@ -32,7 +56,7 @@
      (values $ [(vals data)])
      (returning $ :*))))
 
-(defquery delete-by-token
+(defaccesstokenquery delete-by-token
   IQueryValidation
   (validate
    [_ token]
@@ -46,7 +70,7 @@
    (-> (delete-from :access_tokens)
        (where [:= :token token]))))
 
-(defquery get-by-token
+(defaccesstokenquery get-by-token
   IQueryValidation
   (validate
    [_ token]
@@ -61,7 +85,7 @@
        (from :access_tokens)
        (where [:= :token token]))))
 
-(defquery create-seed?
+(defaccesstokenquery create-seed?
   IQuery
   (query
    [_ {:keys [token]}]

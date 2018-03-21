@@ -13,7 +13,8 @@
     "Running")
   (context "/oauth2" []
     (POST "/token" []
-      (let [middleware (comp (wrap-authorization :anonymous))]
+      (let [middleware (comp (wrap-authorization :anonymous)
+                             (wrap-exposed-attributes :public))]
         (middleware access-tokens-controller/create-access-token)))
     (POST "/revoke" []
       (let [middleware (comp (wrap-authorization :authenticated))]
