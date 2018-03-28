@@ -1,7 +1,5 @@
 (ns todo-cljs-api.core
-  (:require [environ.core :refer [env]]
-            [ring.adapter.jetty :refer [run-jetty]]
-            [ring.middleware.lint :refer [wrap-lint]]
+  (:require [ring.middleware.lint :refer [wrap-lint]]
             [middleware.core :refer [in-env]]
             [middleware.logging :refer [wrap-logging]]
             [middleware.cors :refer [wrap-cors]]
