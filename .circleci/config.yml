@@ -85,15 +85,15 @@ jobs:
     docker:
       - image: google/cloud-sdk:latest
     steps:
-      run:
-        environment:
-          - GCLOUD_SERVICE_KEY_LOCATION: ${HOME}/gcloud-service-key.json
-        command: |
-          echo $GCLOUD_SERVICE_KEY > $GCLOUD_SERVICE_KEY_LOCATION
-          gcloud-auth-activate-service-account --key-file=${GCLOUD_SERVICE_LOCATION}
-          gcloud --quiet config set project ${GCLOUD_PROJECT_NAME}
-          gcloud --quiet config set compute/zone ${GCLOUD_COMPUTE_ZONE}
-          gcloud --quiet container clusters get-credentials ${GCLOUD_CLUSTER_NAME_STAGING}        
+      - run:
+          environment:
+            - GCLOUD_SERVICE_KEY_LOCATION: ${HOME}/gcloud-service-key.json
+          command: |
+            echo $GCLOUD_SERVICE_KEY > $GCLOUD_SERVICE_KEY_LOCATION
+            gcloud-auth-activate-service-account --key-file=${GCLOUD_SERVICE_LOCATION}
+            gcloud --quiet config set project ${GCLOUD_PROJECT_NAME}
+            gcloud --quiet config set compute/zone ${GCLOUD_COMPUTE_ZONE}
+            gcloud --quiet container clusters get-credentials ${GCLOUD_CLUSTER_NAME_STAGING}        
 
 workflows:
   version: 2
