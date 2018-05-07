@@ -41,6 +41,17 @@ jobs:
     docker:
       - image: circleci/clojure:lein-2.7.1
     steps:
+      - checkout
+      - restore_cache:
+          key: $CIRCLECI_CACHE_KEY
+      - run:
+          name: Install dependencies
+          command: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.lein
+          key: $CIRCLECI_CACHE_KEY
       - run:
           name: Build binary
           command: lein build:prod
