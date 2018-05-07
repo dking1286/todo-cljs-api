@@ -86,10 +86,8 @@ jobs:
       - image: google/cloud-sdk:latest
     steps:
       - run:
-          environment:
-            - GCLOUD_SERVICE_KEY_LOCATION: ${HOME}/gcloud-service-key.json
           command: |
-            echo $GCLOUD_SERVICE_KEY > $GCLOUD_SERVICE_KEY_LOCATION
+            echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
             # gcloud-auth-activate-service-account --key-file=${GCLOUD_SERVICE_KEY LOCATION}
             # gcloud --quiet config set project ${GCLOUD_PROJECT_NAME}
             # gcloud --quiet config set compute/zone ${GCLOUD_COMPUTE_ZONE}
