@@ -54,7 +54,9 @@ jobs:
           key: $CIRCLECI_CACHE_KEY
       - run:
           name: Build binary
-          command: lein build:prod
+          command: |
+            lein build:prod
+            cp ./target/uberjar/todo-cljs-api-standalone.jar /tmp/todo-cljs-api/app.jar
 
   build-container:
     working-directory: ~/todo-cljs-api
@@ -67,7 +69,7 @@ jobs:
           name: Build and publish container
           command: |
             echo $DOCKER_PASSWORD | docker login --username=$DOCKER_USERNAME --password-stdin
-            docker build -t dking1286/todo-cljs-api .
+            docker build --build-arg JAR_PATH=/tmp/todo-cljs-api/app.jar -t dking1286/todo-cljs-api .
             docker push dking1286/todo-cljs-api
 
 workflows:
