@@ -47,12 +47,12 @@ jobs:
           name: Build binary
           command: lein build:prod
 
-      - setup_remote_docker:
+      - setup_remote_docker: # Allow pushing to remote docker repository
           docker_layer_caching: true
 
       - run:
           name: Build and upload docker image
           command: |
-            docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
+            echo $DOCKER_PASSWORD | docker login --username=$DOCKER_USERNAME --password-stdin
             docker build -t dking1286/todo-cljs-api .
             docker push dking1286/todo-cljs-api
