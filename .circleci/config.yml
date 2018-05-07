@@ -64,7 +64,7 @@ jobs:
             - todo-cljs-api
 
   build-container:
-    working-directory: ~/todo-cljs-api
+    working_directory: ~/todo-cljs-api
     docker:
       - image: circleci/clojure:lein-2.7.1
     steps:
