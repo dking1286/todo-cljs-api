@@ -56,6 +56,7 @@ jobs:
           name: Build binary
           command: |
             lein build:prod
+            mkdir /tmp/todo-cljs-api
             cp ./target/uberjar/todo-cljs-api-standalone.jar /tmp/todo-cljs-api/app.jar
 
   build-container:
