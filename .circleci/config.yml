@@ -44,17 +44,15 @@ jobs:
           - DB_USER: ubuntu
 
       - run:
-          name: Docker login
-          command: docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
-      
-      - run:
           name: Build binary
           command: lein build:prod
 
-      - run:
-          name: Build container
-          command: docker build -t dking1286/todo-cljs-api .
+      - setup_remote_docker:
+          docker_layer_caching: true
 
       - run:
-          name: Upload container
-          command: docker push dking1286/todo-cljs-api
+          name: Build and upload docker image
+          command: |
+            docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
+            docker build -t dking1286/todo-cljs-api .
+            docker push dking1286/todo-cljs-api
