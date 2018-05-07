@@ -45,7 +45,7 @@ jobs:
 
       - run:
           name: Docker login
-          command: docker login
+          command: docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
       
       - run:
           name: Build binary
