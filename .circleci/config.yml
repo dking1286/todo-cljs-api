@@ -70,6 +70,7 @@ jobs:
       - run:
           name: Build and publish container
           command: |
+            ls /tmp/todo-cljs-api
             echo $DOCKER_PASSWORD | docker login --username=$DOCKER_USERNAME --password-stdin
             docker build --build-arg JAR_PATH=/tmp/todo-cljs-api/app.jar -t dking1286/todo-cljs-api .
             docker push dking1286/todo-cljs-api
