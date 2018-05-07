@@ -65,4 +65,4 @@ workflows:
             - test
       - build-container:
           requires:
-            -build
+            - build
