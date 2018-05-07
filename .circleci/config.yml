@@ -58,13 +58,18 @@ jobs:
             lein build:prod
             mkdir /tmp/todo-cljs-api
             cp ./target/uberjar/todo-cljs-api-standalone.jar /tmp/todo-cljs-api/app.jar
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - todo-cljs-api
 
   build-container:
     working-directory: ~/todo-cljs-api
     docker:
       - image: circleci/clojure:lein-2.7.1
     steps:
-      - checkout
+      - attach_workspace:
+          at: /tmp
       - setup_remote_docker: # Allow pushing to remote docker repository
           docker_layer_caching: true
       - run:
