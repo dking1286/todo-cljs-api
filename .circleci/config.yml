@@ -42,3 +42,19 @@ jobs:
           - DB_TYPE: postgresql
           - DB_HOST: localhost
           - DB_USER: ubuntu
+
+      - run:
+        name: Docker login
+        command: docker login
+      
+      - run:
+        name: Build binary
+        command: lein build:prod
+
+      - run:
+        name: Build container
+        command: docker build -t dking1286/todo-cljs-api .
+
+      - run:
+        name: Upload container
+        command: docker push dking1286/todo-cljs-api

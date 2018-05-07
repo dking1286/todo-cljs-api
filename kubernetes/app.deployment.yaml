@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-cljs-api
+  labels:
+    app:
+spec:
+  replicas: 1 # Number of pod replicas to create
+  selector: # Determines which pods the deployment should manage: The ones with label app: todo-cljs-api, as shown below.
+    matchLabels:
+      app: todo-cljs-api
+  template: # The Pod template
+    metadata:
+      labels:
+        app: todo-cljs-api # Label on the pod
+    spec:
+      containers:
+      - name: todo-cljs-api # ???
+        image: dking1286/todo-cljs-api
+        ports:
+        - containerPort: 3000
