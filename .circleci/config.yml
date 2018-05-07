@@ -56,10 +56,10 @@ jobs:
           name: Build binary
           command: |
             lein build:prod
-            mkdir /tmp/todo-cljs-api
-            cp ./target/uberjar/todo-cljs-api-standalone.jar /tmp/todo-cljs-api/out/app.jar
+            mkdir -p workspace/out
+            cp ./target/uberjar/todo-cljs-api-standalone.jar ./workspace/out/app.jar
       - persist_to_workspace:
-          root: /tmp/todo-cljs-api
+          root: workspace
           paths:
             - out
 
@@ -70,7 +70,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ~/todo-cljs-api/workspace
+          at: workspace
       - setup_remote_docker: # Allow pushing to remote docker repository
           docker_layer_caching: true
       - run:
@@ -78,7 +78,7 @@ jobs:
           command: |
             ls /tmp/todo-cljs-api
             echo $DOCKER_PASSWORD | docker login --username=$DOCKER_USERNAME --password-stdin
-            docker build --build-arg JAR_PATH="./workspace/app.jar" -t dking1286/todo-cljs-api .
+            docker build --build-arg JAR_PATH="./workspace/out/app.jar" -t dking1286/todo-cljs-api .
             docker push dking1286/todo-cljs-api
 
 workflows:
