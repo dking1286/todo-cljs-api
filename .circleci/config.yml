@@ -38,6 +38,8 @@ jobs:
 
   build:
     working_directory: ~/todo-cljs-api
+    docker:
+      - image: circleci/clojure:lein-2.7.1
     steps:
       - run:
           name: Build binary
@@ -45,6 +47,8 @@ jobs:
 
   build-container:
     working-directory: ~/todo-cljs-api
+    docker:
+      - image: circleci/clojure:lein-2.7.1
     steps:
       - setup_remote_docker: # Allow pushing to remote docker repository
           docker_layer_caching: true
