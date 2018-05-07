@@ -1,40 +1,33 @@
 version: 2
 jobs:
-  build:
+  test:
     working_directory: ~/todo-cljs-api
-    
     docker:
       - image: circleci/clojure:lein-2.7.1
         environment:
         - PG_HOST: localhost
         - PG_USER: ubuntu
-
       - image: postgres:9.6
         environment:
         - POSTGRES_USER: ubuntu
         - POSTGRES_DB: todo_cljs_test
-
     environment:
       LEIN_ROOT: nbd
       JVM_OPTS: -Xmx3200m
-
+      CIRCLECI_CACHE_KEY: todo-cljs-api-{{ checksum "project.clj" }}
     steps:
       - checkout
-
       - restore_cache:
-          key: todo-cljs-api-{{ checksum "project.clj" }}
-
+          key: $CIRCLECI_CACHE_KEY
       - run:
           name: Install dependencies
           command: lein deps
-
       - save_cache:
           paths:
             - ~/.m2
             - ~/.lein
-          key: todo-cljs-api-{{ checksum "project.clj" }}
-
-      - run: 
+          key: $CIRCLECI_CACHE_KEY
+      - run:
           name: Run all tests
           command: lein with-profile +test test :all
           environment:
@@ -43,16 +36,33 @@ jobs:
           - DB_HOST: localhost
           - DB_USER: ubuntu
 
+  build:
+    working_directory: ~/todo-cljs-api
+    steps:
       - run:
           name: Build binary
           command: lein build:prod
 
+  build-container:
+    working-directory: ~/todo-cljs-api
+    steps:
       - setup_remote_docker: # Allow pushing to remote docker repository
           docker_layer_caching: true
-
       - run:
-          name: Build and upload docker image
+          name: Build and publish container
           command: |
             echo $DOCKER_PASSWORD | docker login --username=$DOCKER_USERNAME --password-stdin
             docker build -t dking1286/todo-cljs-api .
             docker push dking1286/todo-cljs-api
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+      - build-container:
+          requires:
+            -build
