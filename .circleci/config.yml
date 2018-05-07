@@ -64,6 +64,7 @@ jobs:
     docker:
       - image: circleci/clojure:lein-2.7.1
     steps:
+      - checkout
       - setup_remote_docker: # Allow pushing to remote docker repository
           docker_layer_caching: true
       - run:
