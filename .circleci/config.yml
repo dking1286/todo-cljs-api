@@ -80,14 +80,31 @@ jobs:
             docker build --build-arg JAR_PATH="./workspace/out/app.jar" -t dking1286/todo-cljs-api .
             docker push dking1286/todo-cljs-api
 
+  deploy-container-staging:
+    working_directory: ~/todo-cljs-api
+    docker:
+      - image: google/cloud-sdk:latest
+    steps:
+      run:
+        environment:
+          - GCLOUD_SERVICE_KEY_LOCATION: ${HOME}/gcloud-service-key.json
+        command: |
+          echo $GCLOUD_SERVICE_KEY > $GCLOUD_SERVICE_KEY_LOCATION
+          gcloud-auth-activate-service-account --key-file=${GCLOUD_SERVICE_LOCATION}
+          gcloud --quiet config set project ${GCLOUD_PROJECT_NAME}
+          gcloud --quiet config set compute/zone ${GCLOUD_COMPUTE_ZONE}
+          gcloud --quiet container clusters get-credentials ${GCLOUD_CLUSTER_NAME_STAGING}        
+
 workflows:
   version: 2
   build-test-and-deploy:
     jobs:
       - test
-      - build:
-          requires:
-            - test
+      - build
       - build-container:
           requires:
+            - test
             - build
+      - deploy-container-staging:
+          requires:
+            - build-container
