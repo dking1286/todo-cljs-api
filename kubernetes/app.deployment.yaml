@@ -15,7 +15,7 @@ spec:
         app: todo-cljs-api # Label on the pod
     spec:
       containers:
-      - name: todo-cljs-api # ???
+      - name: todo-cljs-api
         image: dking1286/todo-cljs-api
         ports:
         - containerPort: 3000

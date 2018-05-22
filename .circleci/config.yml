@@ -85,6 +85,7 @@ jobs:
     docker:
       - image: google/cloud-sdk:latest
     steps:
+      - checkout
       - run:
           command: |
             echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
@@ -92,7 +93,8 @@ jobs:
             gcloud --quiet config set project ${GCLOUD_PROJECT_NAME}
             gcloud --quiet config set compute/zone ${GCLOUD_COMPUTE_ZONE}
             gcloud --quiet container clusters get-credentials ${GCLOUD_CLUSTER_NAME_STAGING}
-            kubectl get nodes
+            kubectl create -f ./kubernetes/app.deployment.yaml
+            kubectl get deployments
 
 workflows:
   version: 2
