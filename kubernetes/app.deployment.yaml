@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: todo-cljs-api
   labels:
-    app:
+    app: todo-cljs-api
 spec:
   replicas: 1 # Number of pod replicas to create
   selector: # Determines which pods the deployment should manage: The ones with label app: todo-cljs-api, as shown below.
