@@ -77,7 +77,7 @@ jobs:
           name: Build and publish container
           command: |
             echo $DOCKER_PASSWORD | docker login --username=$DOCKER_USERNAME --password-stdin
-            docker build --build-arg JAR_PATH="./workspace/out/app.jar" -t dking1286/todo-cljs-api .
+            docker build --build-arg JAR_PATH="./workspace/out/app.jar" -t "dking1286/todo-cljs-api:${CIRCLE_SHA1}" .
             docker push dking1286/todo-cljs-api
 
   deploy-container-staging:
