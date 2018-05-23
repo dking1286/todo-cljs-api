@@ -93,8 +93,15 @@ jobs:
             gcloud --quiet config set project ${GCLOUD_PROJECT_NAME}
             gcloud --quiet config set compute/zone ${GCLOUD_COMPUTE_ZONE}
             gcloud --quiet container clusters get-credentials ${GCLOUD_CLUSTER_NAME_STAGING}
-            kubectl create -f ./kubernetes/app.deployment.yaml
-            kubectl get deployments
+            if ! kubectl get deployments todo-cljs-api-deployment ;
+            then
+              kubectl create -f ./kubernetes/app.deployment.yaml
+            fi
+            kubectl patch deployment todo-cljs-api-deployment -p '{"spec":{"template":{"spec":{"containers":[{"name":"todo-cljs-api","image":dking1286/todo-cljs-api:'"$CIRCLE_SHA1"'"}]}}}}'
+            if ! kubectl get services todo-cljs-api-service ;
+            then
+              kubectl create -f ./kubernetes/app.service.yaml
+            fi
 
 workflows:
   version: 2

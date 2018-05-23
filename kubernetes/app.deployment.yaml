@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: todo-cljs-api
+  name: todo-cljs-api-deployment
   labels:
     app: todo-cljs-api
 spec:
