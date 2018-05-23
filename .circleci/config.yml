@@ -97,7 +97,7 @@ jobs:
             then
               kubectl create -f ./kubernetes/app.deployment.yaml
             fi
-            kubectl patch deployment todo-cljs-api-deployment -p '{"spec":{"template":{"spec":{"containers":[{"name":"todo-cljs-api","image":dking1286/todo-cljs-api:'"$CIRCLE_SHA1"'"}]}}}}'
+            kubectl patch deployment todo-cljs-api-deployment -p '{"spec":{"template":{"spec":{"containers":[{"name":"todo-cljs-api","image":"dking1286/todo-cljs-api:'"$CIRCLE_SHA1"'"}]}}}}'
             if ! kubectl get services todo-cljs-api-service ;
             then
               kubectl create -f ./kubernetes/app.service.yaml
