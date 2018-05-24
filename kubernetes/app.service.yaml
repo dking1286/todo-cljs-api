@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: todo-cljs-api-service
 spec:
+  type: NodePort
   selector:
     app: todo-cljs-api
   ports:
