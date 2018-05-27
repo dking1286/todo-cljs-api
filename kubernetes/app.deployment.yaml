@@ -47,5 +47,5 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-db-credentals
+                  name: cloudsql-db-credentials
                   key: password
