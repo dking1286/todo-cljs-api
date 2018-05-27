@@ -84,8 +84,20 @@ jobs:
     working_directory: ~/todo-cljs-api
     docker:
       - image: circleci/clojure:lein-2.7.1
+    environment:
+      CIRCLECI_CACHE_KEY: todo-cljs-api-{{ checksum "project.clj" }}
     steps:
       - checkout
+      - restore_cache:
+          key: $CIRCLECI_CACHE_KEY
+      - run:
+          name: Install dependencies
+          command: lein deps
+      - save_cache:
+          paths:
+            - ~/.m2
+            - ~/.lein
+          key: $CIRCLECI_CACHE_KEY
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
