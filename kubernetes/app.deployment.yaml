@@ -14,8 +14,38 @@ spec:
       labels:
         app: todo-cljs-api # Label on the pod
     spec:
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
       containers:
-      - name: todo-cljs-api
-        image: dking1286/todo-cljs-api
-        ports:
-        - containerPort: 3000
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command: ["/cloud_sql_proxy",
+                    "-instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:5432",
+                    "-credential_file=/secrets/cloudsql/credentials.json"]
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+        - name: todo-cljs-api
+          image: dking1286/todo-cljs-api
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_NAME
+              value: todo_cljs_staging
+            - name: DB_TYPE
+              value: postgresql
+            - name: DB_HOST
+              value: 127.0.0.1:5432
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentals
+                  key: password
