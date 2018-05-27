@@ -38,7 +38,7 @@ spec:
             - name: DB_TYPE
               value: postgresql
             - name: DB_HOST
-              value: 127.0.0.1:5432
+              value: localhost
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
