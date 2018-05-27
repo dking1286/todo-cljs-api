@@ -6,16 +6,11 @@
             [middleware.exposed-attributes :refer [wrap-exposed-attributes]]
             [resources.access-tokens.controller :as access-tokens-controller]
             [resources.todos.controller :as todos-controller]
-            [resources.users.controller :as users-controller]
-            [environ.core :refer [env]]))
+            [resources.users.controller :as users-controller]))
 
 (defroutes root-handler
   (GET "/" []
-    (str (env :db-name)
-          (env :db-type)
-          (env :db-host)
-          (env :db-user)
-          (env :db-password)))
+    "Running")
   (context "/oauth2" []
     (POST "/token" []
       (let [middleware (comp (wrap-authorization :anonymous)

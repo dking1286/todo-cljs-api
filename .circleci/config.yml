@@ -80,6 +80,17 @@ jobs:
             docker build --build-arg JAR_PATH="./workspace/out/app.jar" -t "dking1286/todo-cljs-api:${CIRCLE_SHA1}" .
             docker push dking1286/todo-cljs-api
 
+  run-db-migrations-staging:
+    working_directory: ~/todo-cljs-api
+    docker:
+      - image: circleci/clojure:lein-2.7.1
+      - image: gcr.io/cloudsql-docker/gce-proxy:1.11
+    steps:
+      - checkout
+      - run:
+          command: |
+            ls / | grep cloud_sql_proxy
+
   deploy-container-staging:
     working_directory: ~/todo-cljs-api
     docker:
@@ -108,6 +119,9 @@ workflows:
           requires:
             - test
             - build
-      - deploy-container-staging:
+      - run-db-migrations-staging:
           requires:
             - build-container
+      - deploy-container-staging:
+          requires:
+            - run-db-migrations-staging
