@@ -102,16 +102,15 @@ jobs:
           docker_layer_caching: true
       - run:
           command: |
-            netstat -tulpn | grep 5432
-            # echo $GCLOUD_SQL_SERVICE_KEY > ${HOME}/gcloud-sql-service-key.json
-            # docker run -d \
-            #   -v /cloudsql:/cloudsql \
-            #   -v ${HOME}/gcloud-sql-service-key.json:/config \
-            #   -p 127.0.0.1:5432:5432 \
-            #   gcr.io/cloudsql-docker/gce-proxy:1.11 /cloud_sql_proxy \
-            #   -instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:0.0.0.0:5432 \
-            #   -credential_file=/config
-            # echo '(require '\''[repl.migration]) (repl.migration/migrate!)' | lein repl
+            echo $GCLOUD_SQL_SERVICE_KEY > ${HOME}/gcloud-sql-service-key.json
+            docker run -d \
+              -v /cloudsql:/cloudsql \
+              -v ${HOME}/gcloud-sql-service-key.json:/config \
+              -p 127.0.0.1:5432:5432 \
+              gcr.io/cloudsql-docker/gce-proxy:1.11 /cloud_sql_proxy \
+              -instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:0.0.0.0:5432 \
+              -credential_file=/config
+            echo '(require '\''[repl.migration]) (repl.migration/migrate!)' | lein repl
 
   deploy-container-staging:
     working_directory: ~/todo-cljs-api
