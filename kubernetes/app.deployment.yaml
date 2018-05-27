@@ -34,7 +34,7 @@ spec:
             - containerPort: 3000
           env:
             - name: DB_NAME
-              value: todo_cljs_staging
+              value: todo_cljs_db
             - name: DB_TYPE
               value: postgresql
             - name: DB_HOST
