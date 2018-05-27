@@ -86,6 +86,8 @@ jobs:
       - image: circleci/clojure:lein-2.7.1
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           command: |
             echo $GCLOUD_SQL_SERVICE_KEY > ${HOME}/gcloud-sql-service-key.json
