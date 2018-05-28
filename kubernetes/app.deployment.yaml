@@ -5,29 +5,39 @@ metadata:
   labels:
     app: todo-cljs-api
 spec:
-  replicas: 1 # Number of pod replicas to create
-  selector: # Determines which pods the deployment should manage: The ones with label app: todo-cljs-api, as shown below.
+  # Number of pod replicas to create
+  replicas: 1
+  # Determines which pods the deployment should manage:
+  # The ones with label app: todo-cljs-api, as shown below.
+  selector:
     matchLabels:
       app: todo-cljs-api
-  template: # The Pod template
+  # The Pod template
+  template:
     metadata:
       labels:
-        app: todo-cljs-api # Label on the pod
+        app: todo-cljs-api
     spec:
       volumes:
         - name: cloudsql-instance-credentials
           secret:
             secretName: cloudsql-instance-credentials
       containers:
+        # The cloudsql-proxy container, allows the main application
+        # container to communicate with the CloudSQL instance, which is
+        # located outside the Kubernetes cluster
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
-          command: ["/cloud_sql_proxy",
-                    "-instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:5432",
-                    "-credential_file=/secrets/cloudsql/credentials.json"]
           volumeMounts:
             - name: cloudsql-instance-credentials
               mountPath: /secrets/cloudsql
               readOnly: true
+          command: [
+            "/cloud_sql_proxy",
+            "-instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:5432",
+            "-credential_file=/secrets/cloudsql/credentials.json"
+          ]
+        # The main application container
         - name: todo-cljs-api
           image: dking1286/todo-cljs-api
           ports:
