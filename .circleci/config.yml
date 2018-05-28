@@ -102,7 +102,7 @@ jobs:
           command: |
             echo $GCLOUD_SQL_SERVICE_KEY > ${HOME}/gcloud-sql-service-key.json
             wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-            chmod -x cloud_sql_proxy
+            chmod +x cloud_sql_proxy
             ./cloud_sql_proxy \
               -instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:5432 \
               -credential_file=${HOME}/gcloud-service-key.json &
