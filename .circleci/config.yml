@@ -105,7 +105,7 @@ jobs:
             chmod +x cloud_sql_proxy
             ./cloud_sql_proxy \
               -instances=todo-cljs-api:us-central1:todo-cljs-api-staging=tcp:5432 \
-              -credential_file=${HOME}/gcloud-service-key.json &
+              -credential_file=${HOME}/gcloud-sql-service-key.json &
             echo '(require '\''[repl.migration]) (repl.migration/migrate!)' | lein repl
 
   deploy-container-staging:
