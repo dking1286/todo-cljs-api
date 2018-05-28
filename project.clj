@@ -29,7 +29,9 @@
   :repl-options {:port 3001}
   :uberjar-name "todo-cljs-api-standalone.jar"
 
-  :ring {:handler todo-cljs-api.core/app}
+  :ring
+  {:init todo-cljs-api.core/on-init
+   :handler todo-cljs-api.core/app}
 
   :profiles
   {:dev {:env {:environment "development"}

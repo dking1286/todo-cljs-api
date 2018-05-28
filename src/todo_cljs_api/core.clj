@@ -1,5 +1,7 @@
 (ns todo-cljs-api.core
-  (:require [ring.middleware.lint :refer [wrap-lint]]
+  (:require [clojure.spec.alpha :as s]
+            [environ.core :refer [env]]
+            [ring.middleware.lint :refer [wrap-lint]]
             [middleware.core :refer [in-env]]
             [middleware.logging :refer [wrap-logging]]
             [middleware.cors :refer [wrap-cors]]
@@ -9,6 +11,12 @@
             [middleware.error-handling :refer [wrap-error-handling]]
             [middleware.spec :refer [wrap-spec]]
             [routes.core :refer [root-handler]]))
+
+(defn on-init
+  []
+  (if (s/valid? :middleware.core/environment (env :environment))
+    (println (str "Using environment " (env :environment)))
+    (throw (Error. (str "Invalid environment ") (env :environment)))))
 
 (def middleware-stack
   (comp
@@ -22,3 +30,4 @@
    (in-env #{"development" "test" "production"} wrap-error-handling)))
 
 (def app (middleware-stack root-handler))
+
